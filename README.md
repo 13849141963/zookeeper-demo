@@ -1,0 +1,22 @@
+# zookeeper-demo
+java操作zookeeper增删改查,监听节点得数据变更,子节点数目的变更,以及用zookeeper实现分布式锁的解决方案
+
+
+ListeningZookeeperNode       监听zookeeper节点的数据变化以及节点的删除
+ListeningZookeeperChildNode  监听zookeeper子节点的数目的变更
+DistributedLock              分布式锁类
+TestDiestributedLock         测试类
+TestDiestributedLock2        测试类
+
+
+基于ZooKeeper分布式锁的流程:1.在zookeeper指定节点（locks）下创建临时顺序节点node_n
+ *                        2.获取locks下所有子节点children
+ *                        3.对子节点按节点自增序号从小到大排序
+ *                        4.判断本节点是不是第一个子节点，若是，则获取锁；若不是，则监听比该节点小的那个节点的删除事件
+ *                        5.若监听事件生效，则回到第二步重新进行判断，直到获取到锁
+
+ 存在的情况  问题一:当两个用户对一条数据进行修改时,此时第一个请求进入,创建临时有序节点,处理业务,而此时第二个请求进来发现已经创建了节点,等待节点消失,
+                  问题来了:当第一个用户操作的业务的时间在超时范围之外,就是没处理完业务,此时出现卡顿,第二个请求会一直处于等待状态.
+            问题二:
+            
+ 完善:分布式锁           
